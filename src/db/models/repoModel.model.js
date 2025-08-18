@@ -14,7 +14,6 @@ const repoSchema=new mongoose.Schema({
     forks:Number,
     stars: Number,
     openIssues: Number,
-
     license: String,
     pushedAt: { type: Date }, 
 
