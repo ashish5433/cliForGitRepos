@@ -13,7 +13,6 @@ const repoSchema=new mongoose.Schema({
     topics:[String],
     forks:Number,
     stars: Number,
-    
     openIssues: Number,
 
     license: String,
