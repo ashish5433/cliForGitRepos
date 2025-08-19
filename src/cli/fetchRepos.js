@@ -5,10 +5,28 @@ import { Repos } from "../db/models/repoModel.model.js";
 import fetchIssues from "./fetchIssues.js";
 import axios from "axios";
 
+const checkpointFile=path.resolve('./checkpoint.json')
 
+const saveCheckPoints=(org,page)=>{
+
+    let data={}
+    if(fs.existsSync(checkpointFile)){
+        data=JSON.parse(fs.readFileSync(checkpointFile,'utf-8'))
+    }
+    data[org]={page};
+    fs.writeFileSync(checkpointFile,JSON.stringify(data));
+}
+
+const getCheckPoints=(org)=>{
+    if(fs.existsSync(checkpointFile)){
+        const data=JSON.parse(fs.readFileSync(checkpointFile,'utf-8'))
+        return data[org]?.page || 1
+    }
+    return 1
+}
 const fetchRepos=async (org,options)=>{
     console.log("Fetching : ",org)
-    let page=1;
+    let page=getCheckPoints(org);
     const perPage=90
     while(true){
         const url=`https://api.github.com/orgs/${org}/repos?page=${page}&per_page=${perPage}`;
@@ -20,7 +38,7 @@ const fetchRepos=async (org,options)=>{
         })
         // console.log(res.data)
         if (!Array.isArray(res.data) || res.data.length === 0) {
-                console.log("No Repos Found.");
+                
                 break;
             }
 
@@ -48,6 +66,7 @@ const fetchRepos=async (org,options)=>{
                 console.error(`Error Occcured while Storing data : ${err}`)
             }
         }
+        saveCheckPoints(org,page)
         ++page;
     }
     console.log("Repos Fetched Successfully")
