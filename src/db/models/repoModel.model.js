@@ -18,7 +18,10 @@ const repoSchema=new mongoose.Schema({
     pushedAt: { type: Date }, 
 
 
-},{timestamps:true})
+},{
+    timestamps:true,
+    versionKey: false
+})
 
 repoSchema.index({ org: 1, stars: -1 }); 
 repoSchema.index({ org: 1, name: 1 }, { unique: true });

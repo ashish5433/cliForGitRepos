@@ -14,7 +14,7 @@ const issueSchema=new mongoose.Schema({
         type: String, 
         enum: ["open", "closed"]
      },
-    createdAt: { type: Date },
+    
   },
   { timestamps: true }
 )
