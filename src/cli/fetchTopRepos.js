@@ -11,7 +11,7 @@ const fetchTopRepos = async(options)=>{
         console.log("Wrong Metrices");
         process.exit(1);
     }
-    let sortField=metric==="stars"?"stargazers_count":"open_issues_count"
+    let sortField=metric==="stars"?"stars":"openIssues"
 
     const repos=await Repos.find({org}).sort({[sortField]:-1}).limit(total)
 
@@ -31,6 +31,7 @@ const fetchTopRepos = async(options)=>{
     });
 
     console.log(table.toString())
+    process.exit(1);
 }catch(err){
     console.error(`Error running top command ${err}`)
 }
