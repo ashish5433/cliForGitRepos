@@ -20,6 +20,8 @@
     "docker": "^1.0.0",
     "docker-compose": "^1.2.0",
     "dotenv": "^17.2.1",
-    "mongoose": "^8.17.1"
+    "json2csv": "^6.0.0-alpha.2",
+    "mongoose": "^8.17.1",
+    "parser": "^0.1.4"
   }
 }

@@ -5,71 +5,72 @@ import { Repos } from "../db/models/repoModel.model.js";
 import fetchIssues from "./fetchIssues.js";
 import axios from "axios";
 
-const checkpointFile=path.resolve('./checkpoint.json')
+const checkpointFile = path.resolve('./checkpoint.json')
 
-const saveCheckPoints=(org,page)=>{
+const saveCheckPoints = (org, page) => {
 
-    let data={}
-    if(fs.existsSync(checkpointFile)){
-        data=JSON.parse(fs.readFileSync(checkpointFile,'utf-8'))
+    let data = {}
+    if (fs.existsSync(checkpointFile)) {
+        data = JSON.parse(fs.readFileSync(checkpointFile, 'utf-8'))
     }
-    data[org]={page};
-    fs.writeFileSync(checkpointFile,JSON.stringify(data));
+    data[org] = { page };
+    fs.writeFileSync(checkpointFile, JSON.stringify(data));
 }
 
-const getCheckPoints=(org)=>{
-    if(fs.existsSync(checkpointFile)){
-        const data=JSON.parse(fs.readFileSync(checkpointFile,'utf-8'))
+const getCheckPoints = (org) => {
+    if (fs.existsSync(checkpointFile)) {
+        const data = JSON.parse(fs.readFileSync(checkpointFile, 'utf-8'))
         return data[org]?.page || 1
     }
     return 1
 }
-const fetchRepos=async (org,options)=>{
-    console.log("Fetching : ",org)
-    let page=getCheckPoints(org);
-    const perPage=90
-    while(true){
-        const url=`https://api.github.com/orgs/${org}/repos?page=${page}&per_page=${perPage}`;
-        const res=await axios.get(url,{
-            headers:{
-            Authorization: `token ${process.env.GITHUB_TOKEN}`,
-            Accept: "application/vnd.github+json"
+const fetchRepos = async (org, options) => {
+    console.log("Fetching : ", org)
+    let page = getCheckPoints(org);
+    const perPage = 90
+    while (true) {
+        const url = `https://api.github.com/orgs/${org}/repos?page=${page}&per_page=${perPage}`;
+        const res = await axios.get(url, {
+            headers: {
+                Authorization: `token ${process.env.GITHUB_TOKEN}`,
+                Accept: "application/vnd.github+json"
             }
         })
         // console.log(res.data)
         if (!Array.isArray(res.data) || res.data.length === 0) {
-                break;
-            }
+            break;
+        }
 
 
-        for(const data of res.data){
-            try{
+        for (const data of res.data) {
+            try {
                 // console.log("Testing...")
                 await Repos.updateOne(
-                {org,name:data.name},
-                {
-                    org,
-                    name:data.name,
-                    description:data.description,
-                    topics: data.topics || [],
-                    forks: data.forks_count,
-                    stars: data.stargazers_count,
-                    openIssues: data.open_issues_count,
-                    license: data.license?.spdx_id || null,
-                    pushedAt: data.pushed_at,
-                },
-                {upsert:true}
-            )
-            
-        }catch(err){
+                    { org, name: data.name },
+                    {
+                        org,
+                        name: data.name,
+                        description: data.description,
+                        topics: data.topics || [],
+                        forks: data.forks_count,
+                        stars: data.stargazers_count,
+                        openIssues: data.open_issues_count,
+                        license: data.license?.spdx_id || null,
+                        pushedAt: data.pushed_at,
+                    },
+                    { upsert: true }
+                )
+
+            } catch (err) {
                 console.error(`Error Occcured while Storing data : ${err}`)
             }
         }
-        saveCheckPoints(org,page)
+        saveCheckPoints(org, page)
         ++page;
     }
     console.log("Repos Fetched Successfully")
     await fetchIssues(org)
+    process.exit(0)
 }
 
 
