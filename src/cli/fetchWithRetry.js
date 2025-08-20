@@ -21,10 +21,11 @@ const fetchWithRetry=async(url,headers)=>{
             if((status===403 || status=== 429 ) && remaining==="0" && reset){
                 const resetTime=parseInt(reset,10)*1000;
                 const waitTime=resetTime-Date.now()
-
+                console.warn(`Rate Limit Exceeded with Status code : ${status} and sleep for ${waitTime}s`)
                 await sleep(waitTime)
             }else {
                 const waitTime=Math.pow(3,no_of_attempts)*1000;
+                console.log(`Retrying after sometime`)
                 await sleep(waitTime)
             }
         }

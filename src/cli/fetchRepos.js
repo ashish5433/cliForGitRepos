@@ -28,6 +28,7 @@ const fetchRepos = async (org, options) => {
 
     console.log("Fetching : ", org)
     let page = getCheckPoints(org);
+    // console.log(page)
     const perPage = 90
     while (true) {
         const url = `https://api.github.com/orgs/${org}/repos?page=${page}&per_page=${perPage}`;
@@ -51,7 +52,7 @@ const fetchRepos = async (org, options) => {
         }
 
         for (const data of res.data) {
-            
+
             if (sinceDate && new Date(data.pushed_at) < sinceDate) {
                 continue;
             }
