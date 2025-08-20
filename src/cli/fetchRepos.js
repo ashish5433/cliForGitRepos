@@ -4,7 +4,7 @@ import path from "path";
 import { Repos } from "../db/models/repoModel.model.js";
 import fetchIssues from "./fetchIssues.js";
 import axios from "axios";
-
+import fetchWithRetry from "./fetchWithRetry.js";
 const checkpointFile = path.resolve('./checkpoint.json')
 
 const saveCheckPoints = (org, page) => {
@@ -25,12 +25,13 @@ const getCheckPoints = (org) => {
     return 1
 }
 const fetchRepos = async (org, options) => {
+
     console.log("Fetching : ", org)
     let page = getCheckPoints(org);
     const perPage = 90
     while (true) {
         const url = `https://api.github.com/orgs/${org}/repos?page=${page}&per_page=${perPage}`;
-        const res = await axios.get(url, {
+        const res = await fetchWithRetry(url, {
             headers: {
                 Authorization: `token ${process.env.GITHUB_TOKEN}`,
                 Accept: "application/vnd.github+json"
@@ -40,9 +41,20 @@ const fetchRepos = async (org, options) => {
         if (!Array.isArray(res.data) || res.data.length === 0) {
             break;
         }
-
+        let sinceDate = null;
+        if (options.since) {
+            sinceDate = new Date(options.since);
+            if (isNaN(sinceDate)) {
+                console.error(`Invalid --since date: ${options.since}`);
+                process.exit(1);
+            }
+        }
 
         for (const data of res.data) {
+            
+            if (sinceDate && new Date(data.pushed_at) < sinceDate) {
+                continue;
+            }
             try {
                 // console.log("Testing...")
                 await Repos.updateOne(
