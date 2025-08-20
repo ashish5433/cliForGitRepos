@@ -38,7 +38,6 @@ const fetchRepos=async (org,options)=>{
         })
         // console.log(res.data)
         if (!Array.isArray(res.data) || res.data.length === 0) {
-                
                 break;
             }
 
