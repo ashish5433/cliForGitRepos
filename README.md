@@ -5,7 +5,7 @@ The tool handles pagination, checkpoint resume, and GitHub rate limits automatic
 
 **Clone the Repository**
 
-Step 1: git clone <a>https://github.com/yourname/github-org-collector.git</a>
+Step 1: git clone <a>[https://github.com/yourname/github-org-collector.git](https://github.com/ashish5433/cliForGitRepos.git)</a>
 
 **Install Dependencies**
 
