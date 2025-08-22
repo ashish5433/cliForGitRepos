@@ -61,4 +61,6 @@ Succesffuly handled rate limit by making it Sleep for required Time and resumes 
 
 <img width="1648" height="480" alt="image" src="https://github.com/user-attachments/assets/67136e6b-6326-4414-a525-7e04b21dde2e" />
 
+**Pagination/Checkpoint Flow**
+<img width="515" height="624" alt="image" src="https://github.com/user-attachments/assets/e0071f11-ba2c-4c67-a7bb-2bb0853d85f0" />
 
