@@ -65,3 +65,6 @@ Succesffuly handled rate limit by making it Sleep for required Time and resumes 
 
 <img width="515" height="624" alt="image" src="https://github.com/user-attachments/assets/e0071f11-ba2c-4c67-a7bb-2bb0853d85f0" />
 
+**Screencast link**
+
+https://www.loom.com/share/af819069f6dc4a86873cdfcb7da0ea4b
