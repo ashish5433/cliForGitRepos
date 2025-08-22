@@ -11,17 +11,21 @@ dotenv.config()
 
 await connectDB()
 
+// INIT
 program
     .command("init").description("Connect to momgoDB and create Indexes")
     .action(init)
 
 
+// Fetch
 program
     .command("fetch <org>").option('--since <data>').description("Fetch Repos from Org ")
     .action(async (org, options) => {
         await fetchRepos(org, options);
     })
 
+
+// Top Repos
 program
     .command("top").requiredOption("--org <org>").requiredOption("--metric <feild>").requiredOption("--limit <n>")
     .description("Print a console tabel sorted by given Metrics")
@@ -29,6 +33,8 @@ program
         await fetchTopRepos(option);
     })
 
+
+// Export to CSV
 program
     .command("export").requiredOption("--org <org>").requiredOption("--out <out>")
     .description("Export Repos to CSV")
@@ -36,6 +42,8 @@ program
         await exportToCSV(option);
     })
 
+
+// Sync Stars and Forks
 program
     .command("sync-stars").requiredOption("--org <org>")
     .description("Syncing stars and forks count")
@@ -43,4 +51,5 @@ program
         await syncStars(option)
     })
 
+    
 program.parse(process.argv)

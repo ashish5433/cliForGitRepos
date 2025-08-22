@@ -9,8 +9,10 @@ const init=async ()=>{
         await Issues.createIndexes()
 
         console.log("Indexes Ready")
+        process.exit(0)
     }catch(err){
         console.error(`Error while Initilizing ${err}`)
+        process.exit(1)
     }
 }
 

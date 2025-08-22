@@ -2,7 +2,7 @@ import axios from 'axios'
 
 
 const sleep=(ms)=> new Promise((res)=>setTimeout(res,ms));
-const fetchWithRetry=async(url,headers)=>{
+const fetchWithRetry=async(url)=>{
 
 
     let no_of_attempts=0;
@@ -10,7 +10,12 @@ const fetchWithRetry=async(url,headers)=>{
     while(no_of_attempts<3){
 
         try{
-            const res=await axios.get(url,{headers});
+            const res=await axios.get(url,
+                {headers: {
+                Authorization: `token ${process.env.GITHUB_TOKEN}`,
+                Accept: "application/vnd.github+json"
+            }}
+            );
             return res;
         }catch(err){
             error=err
@@ -23,7 +28,12 @@ const fetchWithRetry=async(url,headers)=>{
                 const waitTime=resetTime-Date.now()
                 console.warn(`Rate Limit Exceeded with Status code : ${status} and sleep for ${waitTime}s`)
                 await sleep(waitTime)
-            }else {
+                no_of_attempts=0;
+            }else if(status===404){
+                console.log(`Wrong Org name exit with Status Code ${status}.`)
+                process.exit(1)
+            }
+            else {
                 const waitTime=Math.pow(3,no_of_attempts)*1000;
                 console.log(`Retrying after sometime`)
                 await sleep(waitTime)

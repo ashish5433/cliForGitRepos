@@ -32,12 +32,7 @@ const fetchRepos = async (org, options) => {
     const perPage = 90
     while (true) {
         const url = `https://api.github.com/orgs/${org}/repos?page=${page}&per_page=${perPage}`;
-        const res = await fetchWithRetry(url, {
-            headers: {
-                Authorization: `token ${process.env.GITHUB_TOKEN}`,
-                Accept: "application/vnd.github+json"
-            }
-        })
+        const res = await fetchWithRetry(url)
         // console.log(res.data)
         if (!Array.isArray(res.data) || res.data.length === 0) {
             break;
@@ -81,7 +76,7 @@ const fetchRepos = async (org, options) => {
         saveCheckPoints(org, page)
         ++page;
     }
-    console.log("Repos Fetched Successfully")
+    console.log("Repos Fetched Successfully and now Fetching Issues per Repo.")
     await fetchIssues(org)
     process.exit(0)
 }
